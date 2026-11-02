@@ -12,7 +12,7 @@ import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import HomeRepairServiceOutlinedIcon from '@mui/icons-material/HomeRepairServiceOutlined';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export const SIDEBAR_WIDTH = 240;
+export const SIDEBAR_WIDTH = 200;
 export const SIDEBAR_COLLAPSED_WIDTH = 72;
 
 interface NavItem {
@@ -62,13 +62,16 @@ export default function Sidebar({ variant, open, collapsed = false, onClose }: S
               sx={{
                 borderRadius: 2,
                 mb: 0.5,
+                px: collapsed ? 1 : 1.25,
                 justifyContent: collapsed ? 'center' : 'flex-start',
               }}
             >
-              <ListItemIcon sx={{ minWidth: collapsed ? 0 : 40, color: isActive ? 'primary.main' : 'inherit' }}>
+              <ListItemIcon sx={{ minWidth: collapsed ? 0 : 34, color: isActive ? 'primary.main' : 'inherit' }}>
                 {item.icon}
               </ListItemIcon>
-              {!collapsed && <ListItemText primary={item.label} />}
+              {!collapsed && (
+                <ListItemText primary={item.label} slotProps={{ primary: { noWrap: true, fontSize: '0.9rem' } }} />
+              )}
             </ListItemButton>
           );
           return collapsed ? (

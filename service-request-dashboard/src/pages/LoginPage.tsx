@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks';
 import { loginUser } from '../features/auth/authSlice';
@@ -97,19 +96,11 @@ export default function LoginPage() {
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
           <Box
-            sx={{
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
-              bgcolor: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mb: 1.5,
-            }}
-          >
-            <HomeRepairServiceIcon sx={{ color: 'white', fontSize: 30 }} />
-          </Box>
+            component="img"
+            src="/megaviz-logo.png"
+            alt="Megaviz"
+            sx={{ width: '100%', maxWidth: 280, height: 'auto', mb: 1.5, objectFit: 'contain' }}
+          />
           <Typography variant="h5" fontWeight={700}>
             ServiceDesk
           </Typography>
@@ -203,15 +194,6 @@ export default function LoginPage() {
           >
             {submitting ? 'Signing in…' : 'Login'}
           </Button>
-
-          <Paper variant="outlined" sx={{ p: 1.5, bgcolor: 'grey.50' }}>
-            <Typography variant="caption" color="text.secondary" display="block">
-              Demo credentials
-            </Typography>
-            <Typography variant="caption" color="text.secondary" display="block">
-              admin@example.com / Admin@123
-            </Typography>
-          </Paper>
         </Box>
 
         <Typography variant="caption" color="text.secondary" align="center" display="block" sx={{ mt: 3 }}>
