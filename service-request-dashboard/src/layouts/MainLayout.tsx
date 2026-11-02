@@ -40,7 +40,7 @@ export default function MainLayout() {
         }}
       >
         <Toolbar />
-        <Box sx={{ p: { xs: 2, sm: 2.5, md: 3 }, maxWidth: 1600, mx: 'auto' }}>
+        <Box sx={{ p: { xs: 2, md: 2.5 }, maxWidth: 1600, mx: 'auto' }}>
           <Outlet />
         </Box>
       </Box>

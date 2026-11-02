@@ -87,8 +87,25 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
   }
 
   return (
-    <TableContainer sx={{ overflowX: 'auto' }}>
-      <Table size="small">
+    <TableContainer>
+      <Table
+        size="small"
+        sx={{
+          tableLayout: 'fixed',
+          width: '100%',
+          '& .MuiTableCell-root': { px: 1, overflow: 'hidden' },
+        }}
+      >
+        <colgroup>
+          <col style={{ width: 92 }} />
+          <col style={{ width: 128 }} />
+          <col />
+          <col style={{ width: 116 }} />
+          <col style={{ width: 108 }} />
+          <col style={{ width: 80 }} />
+          <col style={{ width: 120 }} />
+          <col style={{ width: 112 }} />
+        </colgroup>
         <TableHead>
           <TableRow>
             <TableCell>Request ID</TableCell>
@@ -106,39 +123,43 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
             </TableCell>
             <TableCell>Priority</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell align="right">Actions</TableCell>
+            <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {requests.map((request) => (
             <TableRow key={request.id} hover>
-              <TableCell sx={{ fontWeight: 600 }}>{request.id}</TableCell>
-              <TableCell>{request.customerName}</TableCell>
-              <TableCell>{request.email}</TableCell>
-              <TableCell>{request.serviceType}</TableCell>
-              <TableCell>{formatDate(request.requestDate)}</TableCell>
+              <TableCell sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{request.id}</TableCell>
+              <TableCell sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{request.customerName}</TableCell>
+              <TableCell sx={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>{request.email}</TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>{request.serviceType}</TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(request.requestDate)}</TableCell>
               <TableCell>
                 <PriorityChip priority={request.priority} />
               </TableCell>
               <TableCell>
                 <StatusChip status={request.status} />
               </TableCell>
-              <TableCell align="right">
-                <Tooltip title="View">
-                  <IconButton size="small" onClick={() => navigate(`/requests/${request.id}`)}>
-                    <VisibilityOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Edit">
-                  <IconButton size="small" onClick={() => navigate(`/requests/${request.id}/edit`)}>
-                    <EditOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <IconButton size="small" color="error" onClick={() => onDelete(request)}>
-                    <DeleteOutlineIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+              <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'nowrap' }}>
+                  <Tooltip title="View">
+                    <IconButton size="small" aria-label="View" onClick={() => navigate(`/requests/${request.id}`)}>
+                      <VisibilityOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Edit">
+                    <IconButton size="small" aria-label="Edit" onClick={() => navigate(`/requests/${request.id}/edit`)}>
+                      <EditOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton size="small" color="error" aria-label="Delete" onClick={() => onDelete(request)}>
+                      <DeleteOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </TableCell>
             </TableRow>
           ))}
