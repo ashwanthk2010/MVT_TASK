@@ -78,8 +78,10 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
           />
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleClose}>{result ? 'Close' : 'Cancel'}</Button>
+      <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1 }}>
+        <Button onClick={handleClose} variant="outlined" color="inherit" sx={{ color: 'text.primary' }}>
+          {result ? 'Close' : 'Cancel'}
+        </Button>
         {!result && (
           <Button
             onClick={handleSubmit}

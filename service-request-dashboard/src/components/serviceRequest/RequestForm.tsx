@@ -317,32 +317,54 @@ export default function RequestForm({
           />
         </Grid>
         <Grid size={12}>
-          <Typography variant="subtitle2" gutterBottom>
+          <Typography variant="subtitle2" gutterBottom sx={{ color: 'text.primary' }}>
             Attachments
           </Typography>
           <AttachmentUpload attachments={attachments} onChange={setAttachments} disabled={submitting} />
         </Grid>
       </Grid>
 
-      <Box sx={{ display: 'flex', gap: 1.5, mt: 4, flexWrap: 'wrap' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1.5,
+          mt: 4,
+          pt: 3,
+          flexWrap: 'wrap',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          justifyContent: { xs: 'stretch', sm: 'flex-end' },
+          flexDirection: { xs: 'column-reverse', sm: 'row-reverse' },
+        }}
+      >
         <Button
           type="submit"
           variant="contained"
+          size="large"
           disabled={submitting}
           startIcon={submitting ? <CircularProgress size={16} color="inherit" /> : undefined}
           fullWidth={false}
-          sx={{ minWidth: 140 }}
+          sx={{ minWidth: 160 }}
         >
           {mode === 'create' ? 'Submit Request' : 'Save Changes'}
         </Button>
-        <Button variant="outlined" color="inherit" disabled={submitting} onClick={handleCancelClick}>
+        <Button
+          variant="outlined"
+          color="inherit"
+          size="large"
+          disabled={submitting}
+          onClick={handleCancelClick}
+          sx={{ minWidth: 120, color: 'text.primary' }}
+        >
           Cancel
         </Button>
         <Button
           variant="text"
           color="inherit"
+          size="large"
           disabled={submitting || !isDirty}
           onClick={() => setResetDialogOpen(true)}
+          sx={{ color: 'text.secondary', mr: { sm: 'auto' } }}
         >
           Reset
         </Button>

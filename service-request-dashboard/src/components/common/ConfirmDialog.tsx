@@ -38,8 +38,8 @@ export default function ConfirmDialog({
         <DialogContentText>{description}</DialogContentText>
         {children}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onCancel} disabled={loading}>
+      <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1 }}>
+        <Button onClick={onCancel} disabled={loading} variant="outlined" color="inherit" sx={{ color: 'text.primary' }}>
           {cancelLabel}
         </Button>
         <Button

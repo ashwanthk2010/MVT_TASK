@@ -56,16 +56,21 @@ export default function DashboardPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5 }}>
         <Box>
-          <Typography variant="h5" fontWeight={700}>
+          <Typography variant="h4" fontWeight={700}>
             Dashboard
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             Overview of all customer service requests
           </Typography>
         </Box>
         <Tooltip title="Refresh dashboard">
           <span>
-            <IconButton onClick={() => loadData(true)} disabled={loading} color="primary">
+            <IconButton
+              onClick={() => loadData(true)}
+              disabled={loading}
+              color="primary"
+              sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5 }}
+            >
               <RefreshIcon />
             </IconButton>
           </span>

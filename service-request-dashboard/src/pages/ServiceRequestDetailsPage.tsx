@@ -11,6 +11,12 @@ import Divider from '@mui/material/Divider';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
+import HistoryIcon from '@mui/icons-material/History';
+import { alpha } from '@mui/material/styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
@@ -31,12 +37,49 @@ import { isEditable } from '../utils/statusTransitions';
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 0.25, sm: 2 }, py: 0.75 }}>
-      <Typography variant="body2" color="text.secondary" sx={{ width: { sm: 160 }, flexShrink: 0 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: { xs: 0.25, sm: 2 },
+        py: 1.25,
+        borderBottom: '1px dashed',
+        borderColor: 'divider',
+        '&:last-of-type': { borderBottom: 0 },
+      }}
+    >
+      <Typography variant="body2" color="text.secondary" sx={{ width: { sm: 160 }, flexShrink: 0, fontWeight: 500 }}>
         {label}
       </Typography>
-      <Typography variant="body2" sx={{ fontWeight: 500, wordBreak: 'break-word' }}>
+      <Typography variant="body2" sx={{ fontWeight: 500, wordBreak: 'break-word', color: 'text.primary' }}>
         {value}
+      </Typography>
+    </Box>
+  );
+}
+
+function SectionTitle({ icon, title, color = 'primary' }: { icon: React.ReactNode; title: string; color?: string }) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+      <Box
+        sx={(t) => {
+          const main = (t.palette as unknown as Record<string, { main: string }>)[color]?.main ?? t.palette.primary.main;
+          return {
+            width: 32,
+            height: 32,
+            borderRadius: 2.5,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: alpha(main, 0.12),
+            color: main,
+          };
+        }}
+      >
+        {icon}
+      </Box>
+      <Typography variant="subtitle1" fontWeight={700}>
+        {title}
       </Typography>
     </Box>
   );
@@ -80,14 +123,20 @@ export default function ServiceRequestDetailsPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <IconButton onClick={() => navigate('/requests')}>
+          <IconButton
+            onClick={() => navigate('/requests')}
+            sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5 }}
+          >
             <ArrowBackIcon />
           </IconButton>
           <Box>
-            <Typography variant="h5" fontWeight={700}>
-              {request.id}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Typography variant="h4" fontWeight={700}>
+                {request.id}
+              </Typography>
+              <StatusChip status={request.status} size="medium" />
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
               Created on {formatDate(request.createdAt)}
             </Typography>
           </Box>
@@ -118,16 +167,16 @@ export default function ServiceRequestDetailsPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                  <Typography variant="subtitle1" fontWeight={700}>
-                    Request Information
-                  </Typography>
+                <Box
+                  sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, gap: 1, flexWrap: 'wrap' }}
+                >
+                  <SectionTitle icon={<DescriptionOutlinedIcon fontSize="small" />} title="Request Information" />
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     <PriorityChip priority={request.priority} />
                     <StatusChip status={request.status} />
                   </Box>
                 </Box>
-                <Divider sx={{ mb: 1 }} />
+                <Divider sx={{ mb: 0.5 }} />
                 <InfoRow label="Request Title" value={request.title} />
                 <InfoRow label="Service Category" value={request.serviceType} />
                 <InfoRow label="Description" value={request.description} />
@@ -138,10 +187,8 @@ export default function ServiceRequestDetailsPage() {
 
             <Card>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                  Customer Information
-                </Typography>
-                <Divider sx={{ mb: 1 }} />
+                <SectionTitle icon={<PersonOutlineIcon fontSize="small" />} title="Customer Information" color="secondary" />
+                <Divider sx={{ mt: 1.5, mb: 0.5 }} />
                 <InfoRow label="Name" value={request.customerName} />
                 <InfoRow label="Email" value={request.email} />
                 <InfoRow label="Phone" value={request.phone} />
@@ -151,10 +198,8 @@ export default function ServiceRequestDetailsPage() {
 
             <Card>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                  Attachments
-                </Typography>
-                <Divider sx={{ mb: 1.5 }} />
+                <SectionTitle icon={<AttachFileIcon fontSize="small" />} title="Attachments" color="info" />
+                <Divider sx={{ mt: 1.5, mb: 2 }} />
                 <AttachmentGallery attachments={request.attachments} />
               </CardContent>
             </Card>
@@ -165,20 +210,16 @@ export default function ServiceRequestDetailsPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <Card>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                  Status Management
-                </Typography>
-                <Divider sx={{ mb: 1.5 }} />
+                <SectionTitle icon={<SyncAltIcon fontSize="small" />} title="Status Management" color="warning" />
+                <Divider sx={{ mt: 1.5, mb: 2 }} />
                 <StatusUpdateControl requestId={request.id} currentStatus={request.status} />
               </CardContent>
             </Card>
 
             <Card>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                  Request Timeline
-                </Typography>
-                <Divider sx={{ mb: 1 }} />
+                <SectionTitle icon={<HistoryIcon fontSize="small" />} title="Request Timeline" color="success" />
+                <Divider sx={{ mt: 1.5, mb: 1.5 }} />
                 <RequestTimeline events={request.timeline} />
               </CardContent>
             </Card>
