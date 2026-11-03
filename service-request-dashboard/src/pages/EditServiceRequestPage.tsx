@@ -61,14 +61,17 @@ export default function EditServiceRequestPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <IconButton onClick={() => navigate(id ? `/requests/${id}` : '/requests')}>
+        <IconButton
+          onClick={() => navigate(id ? `/requests/${id}` : '/requests')}
+          sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5 }}
+        >
           <ArrowBackIcon />
         </IconButton>
         <Box>
-          <Typography variant="h5" fontWeight={700}>
+          <Typography variant="h4" fontWeight={700}>
             Edit Service Request
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="primary.main" sx={{ mt: 0.25, fontWeight: 600 }}>
             {id}
           </Typography>
         </Box>
@@ -77,7 +80,7 @@ export default function EditServiceRequestPage() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <Card>
-        <CardContent>
+        <CardContent sx={{ p: { xs: 2.5, md: 4 }, '&:last-child': { pb: { xs: 2.5, md: 4 } } }}>
           {loading || !selectedRequest || !initialValues ? (
             <FormSkeleton />
           ) : !isEditable(selectedRequest.status) ? (

@@ -12,6 +12,10 @@ import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import MailOutlineIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import HomeRepairServiceOutlinedIcon from '@mui/icons-material/HomeRepairServiceOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks';
 import { loginUser } from '../features/auth/authSlice';
@@ -82,24 +86,123 @@ export default function LoginPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '1.05fr 1fr' },
         bgcolor: 'background.default',
-        px: 2,
-        py: 4,
       }}
     >
-      <Paper
-        elevation={3}
-        sx={{ width: '100%', maxWidth: 420, p: { xs: 3, sm: 4.5 }, borderRadius: 3 }}
+      <Box
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden',
+          p: 6,
+          color: '#fff',
+          backgroundImage: 'linear-gradient(145deg, #312E81 0%, #4F46E5 48%, #0D9488 100%)',
+        }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            width: 420,
+            height: 420,
+            borderRadius: '50%',
+            top: -140,
+            right: -140,
+            bgcolor: 'rgba(255,255,255,0.08)',
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            width: 300,
+            height: 300,
+            borderRadius: '50%',
+            bottom: -110,
+            left: -90,
+            bgcolor: 'rgba(14,165,233,0.25)',
+          }}
+        />
+
+        <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 1.25 }}>
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: 3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(255,255,255,0.16)',
+              border: '1px solid rgba(255,255,255,0.25)',
+            }}
+          >
+            <HomeRepairServiceOutlinedIcon sx={{ fontSize: 22 }} />
+          </Box>
+          <Typography variant="h6" fontWeight={700} sx={{ color: '#fff' }}>
+            ServiceDesk
+          </Typography>
+        </Box>
+
+        <Box sx={{ position: 'relative', maxWidth: 460 }}>
+          <Typography variant="h3" sx={{ fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.03em', color: '#fff' }}>
+            Manage every service request in one place.
+          </Typography>
+          <Typography sx={{ mt: 2, color: 'rgba(255,255,255,0.78)', fontSize: '1rem', lineHeight: 1.6 }}>
+            Track requests, update statuses and monitor activity from a single, streamlined admin portal.
+          </Typography>
+          <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            {['Real-time dashboard statistics', 'Smart search, filters and sorting', 'Complete request lifecycle tracking'].map(
+              (feature) => (
+                <Box key={feature} sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                  <CheckCircleRoundedIcon sx={{ fontSize: 20, color: '#5EEAD4' }} />
+                  <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>
+                    {feature}
+                  </Typography>
+                </Box>
+              ),
+            )}
+          </Box>
+        </Box>
+
+        <Typography variant="caption" sx={{ position: 'relative', color: 'rgba(255,255,255,0.6)' }}>
+          © {CURRENT_YEAR} ServiceDesk. All rights reserved.
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          px: 2,
+          py: 4,
+          backgroundImage: {
+            xs: 'radial-gradient(circle at top, rgba(79,70,229,0.10), transparent 60%)',
+            md: 'none',
+          },
+        }}
+      >
+      <Paper
+        elevation={0}
+        sx={{
+          width: '100%',
+          maxWidth: 420,
+          p: { xs: 3, sm: 4.5 },
+          borderRadius: 4,
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: '0 20px 48px rgba(15, 23, 42, 0.08)',
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3.5 }}>
           <Box
             component="img"
             src="/megaviz-logo.png"
             alt="Megaviz"
-            sx={{ width: '100%', maxWidth: 280, height: 'auto', mb: 1.5, objectFit: 'contain' }}
+            sx={{ width: '100%', maxWidth: 200, height: 'auto', mb: 1.5, objectFit: 'contain' }}
           />
           <Typography variant="h5" fontWeight={700}>
             ServiceDesk
@@ -109,7 +212,7 @@ export default function LoginPage() {
           </Typography>
         </Box>
 
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>
           Welcome back
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -130,6 +233,15 @@ export default function LoginPage() {
             error={Boolean(errors.email)}
             helperText={errors.email}
             disabled={submitting}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <MailOutlineIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
           <TextField
             label="Password"
@@ -146,6 +258,11 @@ export default function LoginPage() {
             disabled={submitting}
             slotProps={{
               input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -179,6 +296,7 @@ export default function LoginPage() {
               variant="body2"
               onClick={() => setForgotOpen(true)}
               underline="hover"
+              sx={{ fontWeight: 600 }}
             >
               Forgot Password?
             </Link>
@@ -191,15 +309,22 @@ export default function LoginPage() {
             fullWidth
             disabled={submitting}
             startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : undefined}
+            sx={{ py: 1.4, fontSize: '1rem', borderRadius: 2.5 }}
           >
             {submitting ? 'Signing in…' : 'Login'}
           </Button>
         </Box>
 
-        <Typography variant="caption" color="text.secondary" align="center" display="block" sx={{ mt: 3 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          align="center"
+          sx={{ mt: 3, display: { xs: 'block', md: 'none' } }}
+        >
           © {CURRENT_YEAR} ServiceDesk. All rights reserved.
         </Typography>
       </Paper>
+      </Box>
 
       <ForgotPasswordDialog open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </Box>

@@ -41,7 +41,7 @@ export default function RequestFilters({ filters, onChange, onReset }: RequestFi
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon fontSize="small" />
+                <SearchIcon fontSize="small" sx={{ color: 'primary.main' }} />
               </InputAdornment>
             ),
           },
@@ -110,7 +110,12 @@ export default function RequestFilters({ filters, onChange, onReset }: RequestFi
         onClick={onReset}
         startIcon={<ClearIcon />}
         fullWidth
-        sx={{ height: 40, alignSelf: { xs: 'stretch', sm: 'start' } }}
+        sx={{
+          height: 40,
+          alignSelf: { xs: 'stretch', sm: 'start' },
+          color: 'text.secondary',
+          '&:hover': { color: 'error.main', borderColor: 'error.light', bgcolor: 'rgba(220,38,38,0.04)' },
+        }}
       >
         Clear Filters
       </Button>

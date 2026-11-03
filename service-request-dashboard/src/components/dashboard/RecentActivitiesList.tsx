@@ -3,6 +3,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
+import { alpha } from '@mui/material/styles';
 import Typography from '../common/Typography';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -20,11 +21,11 @@ const ACTIVITY_ICON: Record<RecentActivity['type'], React.ReactElement> = {
   completed: <CheckCircleOutlineIcon fontSize="small" />,
 };
 
-const ACTIVITY_COLOR: Record<RecentActivity['type'], string> = {
-  created: 'info.main',
-  updated: 'warning.main',
-  status_changed: 'secondary.main',
-  completed: 'success.main',
+const ACTIVITY_COLOR: Record<RecentActivity['type'], 'info' | 'warning' | 'secondary' | 'success'> = {
+  created: 'info',
+  updated: 'warning',
+  status_changed: 'secondary',
+  completed: 'success',
 };
 
 interface RecentActivitiesListProps {
@@ -43,15 +44,32 @@ export default function RecentActivitiesList({ activities }: RecentActivitiesLis
       {activities.map((activity) => (
         <ListItem
           key={activity.id}
-          sx={{ px: 0, cursor: 'pointer', borderRadius: 1 }}
+          sx={{
+            px: 1.5,
+            py: 1,
+            mb: 0.5,
+            cursor: 'pointer',
+            borderRadius: 2.5,
+            transition: 'background-color .15s ease',
+            '&:hover': { bgcolor: 'rgba(79, 70, 229, 0.04)' },
+          }}
           onClick={() => navigate(`/requests/${activity.requestId}`)}
         >
-          <ListItemAvatar>
-            <Avatar sx={{ bgcolor: ACTIVITY_COLOR[activity.type], width: 36, height: 36 }}>
+          <ListItemAvatar sx={{ minWidth: 48 }}>
+            <Avatar
+              sx={(t) => ({
+                bgcolor: alpha(t.palette[ACTIVITY_COLOR[activity.type]].main, 0.12),
+                color: t.palette[ACTIVITY_COLOR[activity.type]].main,
+                width: 34,
+                height: 34,
+                borderRadius: 2.5,
+              })}
+            >
               {ACTIVITY_ICON[activity.type]}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
+            slotProps={{ primary: { variant: 'body2', sx: { fontWeight: 500, color: 'text.primary' } } }}
             primary={activity.message}
             secondary={
               <Typography variant="caption" color="text.secondary">

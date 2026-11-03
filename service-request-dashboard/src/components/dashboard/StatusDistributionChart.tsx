@@ -16,16 +16,20 @@ export default function StatusDistributionChart({ data }: StatusDistributionChar
             data={data}
             dataKey="count"
             nameKey="status"
-            innerRadius={55}
-            outerRadius={90}
-            paddingAngle={2}
+            innerRadius={62}
+            outerRadius={92}
+            paddingAngle={3}
+            cornerRadius={6}
+            stroke="none"
           >
             {data.map((entry, index) => (
               <Cell key={entry.status} fill={CHART_COLORS[index % CHART_COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Tooltip
+            contentStyle={{ borderRadius: 10, border: '1px solid #E2E8F0', boxShadow: '0 8px 24px rgba(15,23,42,0.08)' }}
+          />
+          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: '#64748B' }} />
         </PieChart>
       </ResponsiveContainer>
     </Box>

@@ -89,20 +89,33 @@ export default function ServiceRequestListPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5 }}>
         <Box>
-          <Typography variant="h5" fontWeight={700}>
+          <Typography variant="h4" fontWeight={700}>
             Service Requests
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             Search, filter and manage all customer service requests
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate('/requests/new')}>
+        <Button
+          variant="contained"
+          size="large"
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/requests/new')}
+          sx={{ borderRadius: 2.5, px: 2.5 }}
+        >
           Add New Request
         </Button>
       </Box>
 
       <Card>
         <CardContent>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: 'block', mb: 1.5, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+          >
+            Filters
+          </Typography>
           <RequestFilters filters={filters} onChange={handleFiltersChange} onReset={handleResetFilters} />
         </CardContent>
       </Card>
@@ -110,7 +123,7 @@ export default function ServiceRequestListPage() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <Card>
-        <CardContent>
+        <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1 } }}>
           {loading ? (
             <TableSkeleton />
           ) : (

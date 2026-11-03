@@ -20,7 +20,12 @@ export default function GlobalSnackbar() {
       onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
     >
-      <Alert onClose={handleClose} severity={severity} variant="filled" sx={{ width: '100%' }}>
+      <Alert
+        onClose={handleClose}
+        severity={severity}
+        variant="filled"
+        sx={{ width: '100%', borderRadius: 3, boxShadow: '0 12px 32px rgba(15, 23, 42, 0.18)', fontWeight: 500 }}
+      >
         {message}
       </Alert>
     </Snackbar>

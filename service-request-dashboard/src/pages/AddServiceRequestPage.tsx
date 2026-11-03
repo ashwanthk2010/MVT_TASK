@@ -42,21 +42,24 @@ export default function AddServiceRequestPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <IconButton onClick={() => navigate('/requests')}>
+        <IconButton
+          onClick={() => navigate('/requests')}
+          sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5 }}
+        >
           <ArrowBackIcon />
         </IconButton>
         <Box>
-          <Typography variant="h5" fontWeight={700}>
+          <Typography variant="h4" fontWeight={700}>
             Add Service Request
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             Fill in the details below to create a new service request
           </Typography>
         </Box>
       </Box>
 
       <Card>
-        <CardContent>
+        <CardContent sx={{ p: { xs: 2.5, md: 4 }, '&:last-child': { pb: { xs: 2.5, md: 4 } } }}>
           <RequestForm
             mode="create"
             initialValues={EMPTY_VALUES}
