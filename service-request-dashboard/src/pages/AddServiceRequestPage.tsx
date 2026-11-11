@@ -10,6 +10,7 @@ import { createServiceRequest, selectServiceRequestState } from '../features/ser
 import type { Attachment, ServiceRequestFormValues } from '../types/serviceRequest.types';
 import RequestForm from '../components/serviceRequest/RequestForm';
 import { useSnackbar } from '../utils/useSnackbar';
+import { logSubmittedFormData } from '../utils/submittedFormLog';
 
 const EMPTY_VALUES: ServiceRequestFormValues = {
   customerName: '',
@@ -30,8 +31,10 @@ export default function AddServiceRequestPage() {
   const { submitting } = useAppSelector(selectServiceRequestState);
 
   const handleSubmit = async (values: ServiceRequestFormValues, attachments: Attachment[]) => {
+    if (submitting) return;
     try {
       const created = await dispatch(createServiceRequest({ values, attachments })).unwrap();
+      logSubmittedFormData(values, attachments);
       notify(`Request ${created.id} created successfully.`, 'success');
       navigate('/requests');
     } catch (err) {

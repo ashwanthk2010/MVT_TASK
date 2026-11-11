@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -23,7 +23,7 @@ interface RequestFormProps {
   initialValues: ServiceRequestFormValues;
   initialAttachments: Attachment[];
   submitting: boolean;
-  onSubmit: (values: ServiceRequestFormValues, attachments: Attachment[]) => void;
+  onSubmit: (values: ServiceRequestFormValues, attachments: Attachment[]) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -113,6 +113,11 @@ export default function RequestForm({
     JSON.stringify(values) !== JSON.stringify(initialValues) ||
     JSON.stringify(attachments) !== JSON.stringify(initialAttachments);
 
+  const isFormValid = useMemo(
+    () => Object.keys(validateAll(trimValues(values), mode)).length === 0,
+    [values, mode],
+  );
+
   const handleChange = (field: keyof ServiceRequestFormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -126,7 +131,7 @@ export default function RequestForm({
     setErrors((prev) => ({ ...prev, [field]: message }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submittingRef.current || submitting) return;
 
@@ -148,8 +153,11 @@ export default function RequestForm({
     if (Object.keys(allErrors).length > 0) return;
 
     submittingRef.current = true;
-    onSubmit(trimmed, attachments);
-    submittingRef.current = false;
+    try {
+      await Promise.resolve(onSubmit(trimmed, attachments));
+    } finally {
+      submittingRef.current = false;
+    }
   };
 
   const handleCancelClick = () => {
@@ -341,12 +349,12 @@ export default function RequestForm({
           type="submit"
           variant="contained"
           size="large"
-          disabled={submitting}
+          disabled={submitting || !isFormValid}
           startIcon={submitting ? <CircularProgress size={16} color="inherit" /> : undefined}
           fullWidth={false}
           sx={{ minWidth: 160 }}
         >
-          {mode === 'create' ? 'Submit Request' : 'Save Changes'}
+          {submitting ? 'Submitting...' : mode === 'create' ? 'Submit Request' : 'Save Changes'}
         </Button>
         <Button
           variant="outlined"

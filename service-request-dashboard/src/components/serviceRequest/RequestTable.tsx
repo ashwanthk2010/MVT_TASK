@@ -34,6 +34,18 @@ const VIEW_SX = actionSx('#0EA5E9', 'rgba(14,165,233,0.10)');
 const EDIT_SX = actionSx('#4F46E5', 'rgba(79,70,229,0.10)');
 const DELETE_SX = actionSx('#DC2626', 'rgba(220,38,38,0.10)');
 
+function requestIdNumber(id: string): number {
+  const n = Number(id.replace('REQ-', ''));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function orderByRequestId(requests: ServiceRequest[], sortDirection: 'asc' | 'desc'): ServiceRequest[] {
+  return [...requests].sort((a, b) => {
+    const diff = requestIdNumber(a.id) - requestIdNumber(b.id);
+    return sortDirection === 'asc' ? diff : -diff;
+  });
+}
+
 interface RequestTableProps {
   requests: ServiceRequest[];
   sortDirection: 'asc' | 'desc';
@@ -45,6 +57,7 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const orderedRequests = orderByRequestId(requests, sortDirection);
 
   if (requests.length === 0) {
     return (
@@ -65,7 +78,7 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
           onClick={() => onSortChange(sortDirection === 'asc' ? 'desc' : 'asc')}
           sx={{ fontSize: '0.8rem', fontWeight: 600, color: 'text.secondary' }}
         >
-          Request Date
+          Request ID
         </TableSortLabel>
       </Box>
       <Box
@@ -75,7 +88,7 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
           gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
         }}
       >
-        {requests.map((request) => (
+        {orderedRequests.map((request) => (
           <Card key={request.id} variant="outlined" sx={{ boxShadow: 'none' }}>
             <CardContent sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
@@ -143,19 +156,19 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
         </colgroup>
         <TableHead>
           <TableRow>
-            <TableCell>Request ID</TableCell>
-            <TableCell>Customer Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Service Type</TableCell>
             <TableCell sortDirection={sortDirection}>
               <TableSortLabel
                 active
                 direction={sortDirection}
                 onClick={() => onSortChange(sortDirection === 'asc' ? 'desc' : 'asc')}
               >
-                Request Date
+                Request ID
               </TableSortLabel>
             </TableCell>
+            <TableCell>Customer Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Service Type</TableCell>
+            <TableCell>Request Date</TableCell>
             <TableCell>Priority</TableCell>
             <TableCell>Status</TableCell>
             <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
@@ -164,7 +177,7 @@ export default function RequestTable({ requests, sortDirection, onSortChange, on
           </TableRow>
         </TableHead>
         <TableBody>
-          {requests.map((request) => (
+          {orderedRequests.map((request) => (
             <TableRow key={request.id} hover>
               <TableCell sx={{ fontWeight: 600, whiteSpace: 'nowrap', color: 'primary.main' }}>{request.id}</TableCell>
               <TableCell sx={{ whiteSpace: 'normal', wordBreak: 'break-word', fontWeight: 500 }}>

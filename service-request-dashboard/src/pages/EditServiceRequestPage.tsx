@@ -20,6 +20,7 @@ import { FormSkeleton } from '../components/common/LoadingSkeletons';
 import { useSnackbar } from '../utils/useSnackbar';
 import { isEditable } from '../utils/statusTransitions';
 import { toISODateOnly } from '../utils/dateUtils';
+import { logSubmittedFormData } from '../utils/submittedFormLog';
 
 export default function EditServiceRequestPage() {
   const { id } = useParams<{ id: string }>();
@@ -48,9 +49,10 @@ export default function EditServiceRequestPage() {
   }, [selectedRequest]);
 
   const handleSubmit = async (values: ServiceRequestFormValues, attachments: Attachment[]) => {
-    if (!id) return;
+    if (!id || submitting) return;
     try {
       const updated = await dispatch(updateServiceRequest({ id, values, attachments })).unwrap();
+      logSubmittedFormData(values, attachments, { id: updated.id });
       notify(`Request ${updated.id} updated successfully.`, 'success');
       navigate(`/requests/${id}`);
     } catch (err) {
