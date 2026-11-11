@@ -8,7 +8,7 @@ import type {
   ServiceRequestState,
 } from '../../types/serviceRequest.types';
 import type { RootState } from '../../app/store';
-import type { FetchRequestsParams } from '../../services/serviceRequestService';
+import type { FetchRequestsParams, SearchSuggestionParams } from '../../services/serviceRequestService';
 
 const initialState: ServiceRequestState = {
   requests: [],
@@ -26,6 +26,17 @@ export const fetchServiceRequests = createAsyncThunk(
       return await api.fetchServiceRequests(params);
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to load requests.');
+    }
+  },
+);
+
+export const fetchSearchSuggestions = createAsyncThunk(
+  'serviceRequest/fetchSearchSuggestions',
+  async (params: SearchSuggestionParams, { rejectWithValue }) => {
+    try {
+      return await api.fetchSearchSuggestions(params);
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to load suggestions.');
     }
   },
 );

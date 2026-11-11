@@ -1,0 +1,44 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '../components/common/Typography';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { createServiceRequest, selectServiceRequestState } from '../features/serviceRequest/serviceRequestSlice';
+import RequestForm from '../components/serviceRequest/RequestForm';
+import { useSnackbar } from '../utils/useSnackbar';
+import { logSubmittedFormData } from '../utils/submittedFormLog';
+const EMPTY_VALUES = {
+    customerName: '',
+    email: '',
+    phone: '',
+    serviceType: '',
+    title: '',
+    description: '',
+    priority: '',
+    requestDate: '',
+    address: '',
+};
+export default function AddServiceRequestPage() {
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const notify = useSnackbar();
+    const { submitting } = useAppSelector(selectServiceRequestState);
+    const handleSubmit = async (values, attachments) => {
+        if (submitting)
+            return;
+        try {
+            const created = await dispatch(createServiceRequest({ values, attachments })).unwrap();
+            logSubmittedFormData(values, attachments);
+            notify(`Request ${created.id} created successfully.`, 'success');
+            navigate('/requests');
+        }
+        catch (err) {
+            notify(typeof err === 'string' ? err : 'Failed to create request.', 'error');
+        }
+    };
+    return (_jsxs(Box, { sx: { display: 'flex', flexDirection: 'column', gap: 2.5 }, children: [_jsxs(Box, { sx: { display: 'flex', alignItems: 'center', gap: 1.5 }, children: [_jsx(IconButton, { onClick: () => navigate('/requests'), sx: { border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5 }, children: _jsx(ArrowBackIcon, {}) }), _jsxs(Box, { children: [_jsx(Typography, { variant: "h4", fontWeight: 700, children: "Add Service Request" }), _jsx(Typography, { variant: "body2", color: "text.secondary", sx: { mt: 0.25 }, children: "Fill in the details below to create a new service request" })] })] }), _jsx(Card, { children: _jsx(CardContent, { sx: { p: { xs: 2.5, md: 4 }, '&:last-child': { pb: { xs: 2.5, md: 4 } } }, children: _jsx(RequestForm, { mode: "create", initialValues: EMPTY_VALUES, initialAttachments: [], submitting: submitting, onSubmit: handleSubmit, onCancel: () => navigate('/requests') }) }) })] }));
+}

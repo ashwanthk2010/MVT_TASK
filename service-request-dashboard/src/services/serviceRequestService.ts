@@ -3,6 +3,8 @@ import type {
   Attachment,
   Priority,
   RequestStatus,
+  SearchSuggestion,
+  SearchSuggestionField,
   ServiceRequest,
   ServiceRequestFormValues,
   ServiceType,
@@ -43,47 +45,99 @@ export interface FetchRequestsResult {
   total: number;
 }
 
+export interface SearchSuggestionParams {
+  query: string;
+  status?: RequestStatus | 'All';
+  priority?: Priority | 'All';
+  serviceType?: ServiceType | 'All';
+  dateFrom?: string | null;
+  dateTo?: string | null;
+}
+
+const SEARCHABLE_FIELDS: Array<{ field: SearchSuggestionField; read: (request: ServiceRequest) => string }> = [
+  { field: 'id', read: (request) => request.id },
+  { field: 'customerName', read: (request) => request.customerName },
+  { field: 'title', read: (request) => request.title },
+];
+
+function requestMatchesSearch(request: ServiceRequest, search: string): boolean {
+  const term = search.trim().toLowerCase();
+  if (!term) return true;
+  return SEARCHABLE_FIELDS.some((source) => source.read(request).toLowerCase().includes(term));
+}
+
+function requestMatchesFilters(
+  request: ServiceRequest,
+  params: Pick<FetchRequestsParams, 'status' | 'priority' | 'serviceType' | 'dateFrom' | 'dateTo'>,
+): boolean {
+  const { status = 'All', priority = 'All', serviceType = 'All', dateFrom = null, dateTo = null } = params;
+  if (status !== 'All' && request.status !== status) return false;
+  if (priority !== 'All' && request.priority !== priority) return false;
+  if (serviceType !== 'All' && request.serviceType !== serviceType) return false;
+  if (dateFrom && new Date(request.requestDate).getTime() < new Date(dateFrom).getTime()) return false;
+  if (dateTo && new Date(request.requestDate).getTime() > new Date(dateTo).getTime()) return false;
+  return true;
+}
+
+export async function fetchSearchSuggestions(params: SearchSuggestionParams): Promise<SearchSuggestion[]> {
+  const term = params.query.trim().toLowerCase();
+  if (!term) return [];
+
+  const seen = new Set<string>();
+  const matches: SearchSuggestion[] = [];
+
+  for (const request of DB) {
+    if (!requestMatchesFilters(request, params)) continue;
+    for (const source of SEARCHABLE_FIELDS) {
+      const value = source.read(request).trim();
+      if (!value.toLowerCase().includes(term)) continue;
+      const dedupeKey = value.toLowerCase();
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+      matches.push({
+        key: `${source.field}:${dedupeKey}`,
+        label: value,
+        value,
+        field: source.field,
+      });
+    }
+  }
+
+  const relevance = (label: string) => {
+    const normalized = label.toLowerCase();
+    if (normalized === term) return 0;
+    if (normalized.startsWith(term)) return 1;
+    return 2;
+  };
+  const fieldOrder: Record<SearchSuggestionField, number> = { id: 0, customerName: 1, title: 2 };
+
+  matches.sort((a, b) => {
+    const byRelevance = relevance(a.label) - relevance(b.label);
+    if (byRelevance !== 0) return byRelevance;
+    const byField = fieldOrder[a.field] - fieldOrder[b.field];
+    if (byField !== 0) return byField;
+    return a.label.localeCompare(b.label);
+  });
+
+  return matches.slice(0, 8);
+}
+
 export async function fetchServiceRequests(params: FetchRequestsParams): Promise<FetchRequestsResult> {
   const {
     search = '',
-    status = 'All',
-    priority = 'All',
-    serviceType = 'All',
-    dateFrom = null,
-    dateTo = null,
     sortDirection = 'desc',
     page = 1,
     pageSize = 10,
   } = params;
 
-  let results = DB.slice();
-
-  if (search.trim()) {
-    const term = search.trim().toLowerCase();
-    results = results.filter(
-      (r) => r.id.toLowerCase().includes(term) || r.customerName.toLowerCase().includes(term),
-    );
-  }
-  if (status !== 'All') {
-    results = results.filter((r) => r.status === status);
-  }
-  if (priority !== 'All') {
-    results = results.filter((r) => r.priority === priority);
-  }
-  if (serviceType !== 'All') {
-    results = results.filter((r) => r.serviceType === serviceType);
-  }
-  if (dateFrom) {
-    const from = new Date(dateFrom).getTime();
-    results = results.filter((r) => new Date(r.requestDate).getTime() >= from);
-  }
-  if (dateTo) {
-    const to = new Date(dateTo).getTime();
-    results = results.filter((r) => new Date(r.requestDate).getTime() <= to);
-  }
+  const results = DB.filter((request) => requestMatchesFilters(request, params) && requestMatchesSearch(request, search));
 
   results.sort((a, b) => {
-    const diff = new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+    const idNumber = (id: string) => {
+      const n = Number(id.replace('REQ-', ''));
+      return Number.isFinite(n) ? n : 0;
+    };
+    const diff = idNumber(a.id) - idNumber(b.id);
     return sortDirection === 'asc' ? diff : -diff;
   });
 

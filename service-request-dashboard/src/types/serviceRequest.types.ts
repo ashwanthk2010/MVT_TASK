@@ -71,6 +71,15 @@ export interface ServiceRequestFilters {
   dateTo: string | null;
 }
 
+export type SearchSuggestionField = 'id' | 'customerName' | 'title';
+
+export interface SearchSuggestion {
+  key: string;
+  label: string;
+  value: string;
+  field: SearchSuggestionField;
+}
+
 export interface ServiceRequestState {
   requests: ServiceRequest[];
   selectedRequest: ServiceRequest | null;

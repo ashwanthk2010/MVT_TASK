@@ -1,0 +1,14 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { store } from './app/store';
+import { theme } from './theme/theme';
+import App from './App';
+import './index.css';
+createRoot(document.getElementById('root')).render(_jsx(StrictMode, { children: _jsx(Provider, { store: store, children: _jsxs(ThemeProvider, { theme: theme, children: [_jsx(CssBaseline, {}), _jsx(LocalizationProvider, { dateAdapter: AdapterDateFns, children: _jsx(BrowserRouter, { children: _jsx(App, {}) }) })] }) }) }));
