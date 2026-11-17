@@ -10,6 +10,7 @@ import Link from '@mui/material/Link';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined';
@@ -31,6 +32,18 @@ interface FormErrors {
   password?: string;
 }
 
+function emailError(value: string): string | undefined {
+  if (!value.trim()) return 'Email address is required.';
+  if (!isValidEmail(value)) return 'Please enter a valid email address.';
+  return undefined;
+}
+
+function passwordError(value: string): string | undefined {
+  if (!value) return 'Password is required.';
+  if (value.length < 6) return 'Password must be at least 6 characters.';
+  return undefined;
+}
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -42,28 +55,23 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => Boolean(readRememberedEmail()));
   const [errors, setErrors] = useState<FormErrors>({});
+  const [credentialsError, setCredentialsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
 
   const validate = (): boolean => {
-    const next: FormErrors = {};
-    if (!email.trim()) {
-      next.email = 'Email address is required.';
-    } else if (!isValidEmail(email)) {
-      next.email = 'Please enter a valid email address.';
-    }
-    if (!password) {
-      next.password = 'Password is required.';
-    } else if (password.length < 6) {
-      next.password = 'Password must be at least 6 characters.';
-    }
+    const next: FormErrors = {
+      email: emailError(email),
+      password: passwordError(password),
+    };
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return !next.email && !next.password;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submittingRef.current) return;
+    setCredentialsError(null);
     if (!validate()) return;
 
     submittingRef.current = true;
@@ -74,7 +82,7 @@ export default function LoginPage() {
       navigate('/dashboard', { replace: true });
     } catch (err) {
       const message = typeof err === 'string' ? err : 'Invalid email or password.';
-      setErrors((prev) => ({ ...prev, password: ' ' }));
+      setCredentialsError(message);
       notify(message, 'error');
     } finally {
       submittingRef.current = false;
@@ -220,6 +228,11 @@ export default function LoginPage() {
         </Typography>
 
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.25 }}>
+          {credentialsError && (
+            <Alert severity="error" role="alert">
+              {credentialsError}
+            </Alert>
+          )}
           <TextField
             label="Email Address"
             type="email"
@@ -229,7 +242,9 @@ export default function LoginPage() {
             onChange={(e) => {
               setEmail(e.target.value);
               if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              if (credentialsError) setCredentialsError(null);
             }}
+            onBlur={() => setErrors((prev) => ({ ...prev, email: emailError(email) }))}
             error={Boolean(errors.email)}
             helperText={errors.email}
             disabled={submitting}
@@ -252,9 +267,11 @@ export default function LoginPage() {
             onChange={(e) => {
               setPassword(e.target.value);
               if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+              if (credentialsError) setCredentialsError(null);
             }}
+            onBlur={() => setErrors((prev) => ({ ...prev, password: passwordError(password) }))}
             error={Boolean(errors.password)}
-            helperText={errors.password?.trim() ? errors.password : ' '}
+            helperText={errors.password ?? ' '}
             disabled={submitting}
             slotProps={{
               input: {
